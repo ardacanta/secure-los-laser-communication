@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L.O.S. Kontrol ve Sinyal Komuta</title>
+    <style>
+        body { 
+            font-family: 'Courier New', Courier, monospace; 
+            background-color: #0d0f12; 
+            color: #00ff66; 
+            text-align: center; 
+            padding-top: 40px; 
+            margin: 0;
+        }
+        .panel { 
+            max-width: 650px; 
+            margin: 0 auto; 
+            background: #161a22; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.2); 
+            border: 1px solid #00ff66; 
+        }
+        h1 { 
+            color: #ffffff; 
+            text-shadow: 0 0 10px #00ff66; 
+            margin-bottom: 20px; 
+            font-size: 24px; 
+        }
+        .setup-box { 
+            background: #1a233a; 
+            padding: 15px; 
+            border-radius: 6px; 
+            border: 1px solid #333; 
+            margin-bottom: 20px; 
+            text-align: left; 
+            font-size: 14px; 
+        }
+        .kripto-alan {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #333;
+        }
+        input[type="text"], input[type="number"] { 
+            padding: 12px; 
+            border: 1px solid #00ff66; 
+            background: #000; 
+            color: #fff; 
+            font-size: 16px; 
+            border-radius: 6px; 
+            outline: none; 
+            box-shadow: inset 0 0 5px #00ff66; 
+        }
+        .msg-input { 
+            width: 85%; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            font-size: 18px; 
+            font-weight: bold; 
+            text-transform: uppercase;
+        }
+        button { 
+            background-color: #00ff66; 
+            color: #000; 
+            border: none; 
+            padding: 15px 30px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            width: 90%; 
+            text-transform: uppercase; 
+            box-shadow: 0 4px 10px rgba(0,255,102,0.4); 
+        }
+        button:hover { 
+            background-color: #00b347; 
+            box-shadow: 0 0 15px #00ff66; 
+        }
+        .btn-kilit {
+            background-color: #ffaa00 !important;
+            color: #000 !important;
+            padding: 10px 20px !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            border: none !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            display: inline-block !important;
+            margin-left: 10px !important;
+            box-shadow: 0 0 10px rgba(255,170,0,0.5) !important;
+        }
+        .terminal { 
+            margin-top: 25px; 
+            padding: 15px; 
+            background: #000; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            color: #88ff88; 
+            text-align: left; 
+            min-height: 140px; 
+            border: 1px dashed #00ff66; 
+            overflow-y: auto; 
+            max-height: 250px; 
+        }
+        .auto-badge { 
+            background: #ffaa00; 
+            color: #000; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            font-size: 11px; 
+            margin-left: 5px;
+        }
+        /* 🚨 SİBER ŞALTER STİLİ */
+        .switch-container {
+            margin-top: 15px;
+            padding: 10px;
+            background: #0d1117;
+            border: 1px solid #ffaa00;
+            border-radius: 6px;
+            display: inline-block;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>⚡ L.O.S. OPERASYON MERKEZİ V2.0 ⚡</h1>
+        
+        <div class="setup-box">
+            <strong>⚙️ Donanım Senkronizasyon Ayarları:</strong><br><br>
+            
+            <div>
+                <label>Nano Eşik Süresi (ms): </label>
+                <input type="number" id="esikSuresi" value="500" style="width: 80px; text-align: center;"> 
+                <span class="auto-badge" id="otomatikDurum">NANO BEKLENİYOR...</span>
+            </div>
+            
+            <div class="kripto-alan">
+                <label style="color: #ffaa00; font-weight: bold;">Kripto Key (Sezar Adımı): </label>
+                <input type="number" id="kriptoKey" value="3" min="1" max="25" style="width: 60px; text-align: center; border-color: #ffaa00;">
+                <input type="button" class="btn-kilit" value="🔒 ANAHTARI KİLİTLE" onclick="anahtariKilitle()">
+                <br>
+                
+                <div class="switch-container" onclick="modDegistir()">
+                    <input type="checkbox" id="guvenliModSwitch" checked style="transform: scale(1.3); cursor: pointer;">
+                    <strong id="modMetni" style="color: #00ff66; font-size: 16px; margin-left: 5px;">GÖNDERİM MODU: 🔒 GÜVENLİ (ŞİFRELİ)</strong>
+                </div>
+            </div>
+            
+            <br><small style="color: #aaa;">(Sistem Nano'yu arka planda dinler, kalibrasyon bittiği an eşik otomatik güncellenir usta!)</small>
+        </div>
+
+        <p>Lazer hattından gönderilecek mesajı yazın:</p>
+        <input type="text" id="mesajKutusu" class="msg-input" placeholder="Örn: ARDA" autocomplete="off">
+        <br><br>
+        <button onclick="sinyaliFirlat()">Lazer Hattına Bas 🚀</button>
+        
+        <div class="terminal" id="terminalEkrani">> L.O.S. Tam Otomatik Canlı Sistem Aktif.</div>
+    </div>
+
+    <script>
+        var basilanLoglarKumesi = new Set();
+
+        function terminaleEnUsteYaz(metin) {
+            var term = document.getElementById("terminalEkrani");
+            term.innerHTML = "> " + metin + "<br>" + term.innerHTML;
+            term.scrollTop = 0;
+        }
+        
+        // 🚨 ŞALTERE TIKLAYINCA RENGİ VE YAZIYI DEĞİŞTİREN FONKSİYON
+        function modDegistir() {
+            var kutu = document.getElementById("guvenliModSwitch");
+            var metin = document.getElementById("modMetni");
+            var container = document.querySelector(".switch-container");
+            
+            if(kutu.checked) {
+                metin.innerHTML = "GÖNDERİM MODU: 🔒 GÜVENLİ (ŞİFRELİ)";
+                metin.style.color = "#00ff66";
+                container.style.borderColor = "#ffaa00";
+            } else {
+                metin.innerHTML = "GÖNDERİM MODU: 🔓 ŞİFRESİZ (ÇIPLAK)";
+                metin.style.color = "#ff4444";
+                container.style.borderColor = "#ff4444";
+            }
+        }
+
+        function anahtariKilitle() {
+            var key = document.getElementById("kriptoKey").value;
+            fetch('/key-guncelle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'kripto_key=' + key
+            })
+            .then(res => res.json())
+            .then(data => {
+                terminaleEnUsteYaz(data.durum);
+            })
+            .catch(err => alert("Bağlantı hatası usta!"));
+        }
+
+        setInterval(function() {
+            fetch('/esik-cek?v=' + Date.now())
+            .then(res => res.json())
+            .then(data => {
+                var kutu = document.getElementById("esikSuresi");
+                if (kutu.value != data.esik) {
+                    kutu.value = data.esik;
+                    document.getElementById("otomatikDurum").innerHTML = "OTOMATİK EŞİTLENDİ ✓";
+                    document.getElementById("otomatikDurum").style.backgroundColor = "#00ff66";
+                    document.getElementById("otomatikDurum").style.color = "#000";
+                    terminaleEnUsteYaz("Sistem: Arka planda Nano kalibrasyon eşiği senkronize edildi: " + data.esik + " ms");
+                }
+
+                if (data.loglar && data.loglar.length > 0) {
+                    for (var i = data.loglar.length - 1; i >= 0; i--) {
+                        var logSatiri = data.loglar[i];
+                        if (!basilanLoglarKumesi.has(logSatiri) && !logSatiri.startsWith("ESIK:")) {
+                            terminaleEnUsteYaz(logSatiri);
+                            basilanLoglarKumesi.add(logSatiri);
+                        }
+                    }
+                }
+            })
+            .catch(err => console.log("Kopukluk var: ", err));
+        }, 1000);
+
+        function sinyaliFirlat() {
+            var msg = document.getElementById("mesajKutusu").value.toUpperCase();
+            var esik = document.getElementById("esikSuresi").value;
+            var key = document.getElementById("kriptoKey").value;
+            var guvenliMi = document.getElementById("guvenliModSwitch").checked; 
+            
+            if(!msg) { alert("Lütfen bir mesaj girin usta!"); return; }
+            
+            // 🚨 DÜZELTİLEN EFSANE SATIR BURASI: 
+            // Direkt eşitlemek yerine eski logların en üstüne ekliyoruz, böylece ekran sıfırlanmıyor!
+            var term = document.getElementById("terminalEkrani");
+            term.innerHTML = "> Sinyal üretiliyor... Hedef Kelime: " + msg + "<br>" + term.innerHTML;
+            
+            fetch('/gonder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'mesaj=' + encodeURIComponent(msg) + '&esik=' + esik + '&kripto_key=' + key + '&guvenli_mod=' + guvenliMi
+            })
+            .then(res => res.json())
+            .then(data => {
+                terminaleEnUsteYaz(data.durum);
+                document.getElementById("mesajKutusu").value = ""; 
+            });
+        }
+    </script>
+</body>
+</html>
