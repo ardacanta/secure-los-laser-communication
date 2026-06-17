@@ -35,14 +35,14 @@
             border: 1px solid #333; 
             margin-bottom: 20px; 
             text-align: left; 
-            font-size: 14px; 
+            font-size: 14px;
         }
         .kripto-alan {
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px dashed #333;
         }
-        input[type="text"], input[type="number"] { 
+        input[type="text"], input[type="number"], select { 
             padding: 12px; 
             border: 1px solid #00ff66; 
             background: #000; 
@@ -51,6 +51,14 @@
             border-radius: 6px; 
             outline: none; 
             box-shadow: inset 0 0 5px #00ff66; 
+        }
+        .select-yon {
+            background: #000;
+            color: #ffaa00;
+            border: 1px solid #ffaa00;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            padding: 10px;
         }
         .msg-input { 
             width: 85%; 
@@ -113,7 +121,6 @@
             font-size: 11px; 
             margin-left: 5px;
         }
-        /* 🚨 SİBER ŞALTER STİLİ */
         .switch-container {
             margin-top: 15px;
             padding: 10px;
@@ -142,7 +149,15 @@
                 <label style="color: #ffaa00; font-weight: bold;">Kripto Key (Sezar Adımı): </label>
                 <input type="number" id="kriptoKey" value="3" min="1" max="25" style="width: 60px; text-align: center; border-color: #ffaa00;">
                 <input type="button" class="btn-kilit" value="🔒 ANAHTARI KİLİTLE" onclick="anahtariKilitle()">
-                <br>
+                
+                <div style="margin-top: 15px; margin-bottom: 15px;">
+                    <label style="color: #ffaa00; font-weight: bold;">Siber Şifreleme Yönü: </label>
+                    <select id="kriptoYon" class="select-yon">
+                        <option value="ileri">İLERİ MOD (+Key Örn: A -> D)</option>
+                        <option value="geri">GERİ MOD (-Key Örn: A -> X)</option>
+                    </select>
+                    <input type="button" class="btn-kilit" value="🔄 YÖNÜ KİLİTLE" onclick="yonuKilitle()">
+                </div>
                 
                 <div class="switch-container" onclick="modDegistir()">
                     <input type="checkbox" id="guvenliModSwitch" checked style="transform: scale(1.3); cursor: pointer;">
@@ -170,7 +185,6 @@
             term.scrollTop = 0;
         }
         
-        // 🚨 ŞALTERE TIKLAYINCA RENGİ VE YAZIYI DEĞİŞTİREN FONKSİYON
         function modDegistir() {
             var kutu = document.getElementById("guvenliModSwitch");
             var metin = document.getElementById("modMetni");
@@ -189,10 +203,25 @@
 
         function anahtariKilitle() {
             var key = document.getElementById("kriptoKey").value;
+            var guvenliMi = document.getElementById("guvenliModSwitch").checked;
             fetch('/key-guncelle', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'kripto_key=' + key
+                body: 'kripto_key=' + key + '&guvenli_mod=' + guvenliMi
+            })
+            .then(res => res.json())
+            .then(data => {
+                terminaleEnUsteYaz(data.durum);
+            })
+            .catch(err => alert("Bağlantı hatası usta!"));
+        }
+
+        function yonuKilitle() {
+            var yon = document.getElementById("kriptoYon").value;
+            fetch('/yon-guncelle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'kripto_yon=' + yon
             })
             .then(res => res.json())
             .then(data => {
@@ -235,8 +264,6 @@
             
             if(!msg) { alert("Lütfen bir mesaj girin usta!"); return; }
             
-            // 🚨 DÜZELTİLEN EFSANE SATIR BURASI: 
-            // Direkt eşitlemek yerine eski logların en üstüne ekliyoruz, böylece ekran sıfırlanmıyor!
             var term = document.getElementById("terminalEkrani");
             term.innerHTML = "> Sinyal üretiliyor... Hedef Kelime: " + msg + "<br>" + term.innerHTML;
             
